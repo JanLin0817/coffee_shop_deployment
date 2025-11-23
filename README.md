@@ -18,3 +18,5 @@ Without this after `schedulingStrategy` config, services can update by ECS.
 Follow create-xxx-service.sh
 - `aws ecs create-service --cli-input-json file://${TEMP_JSON}`
 
+## TODO
+task def and create service use 2 different script tech
