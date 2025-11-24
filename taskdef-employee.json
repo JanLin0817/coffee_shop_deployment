@@ -6,7 +6,7 @@
             "environment": [
                 {
                     "name": "APP_DB_HOST",
-                    "value": "<RDS-ENDPOINT>"
+                    "value": "supplierdb.ckgsg0cgyi09.us-east-1.rds.amazonaws.com"
                 }
             ],
             "essential": true,
@@ -34,6 +34,6 @@
     "networkMode": "awsvpc",
     "cpu": "512",
     "memory": "1024",
-    "executionRoleArn": "arn:aws:iam::<ACCOUNT-ID>:role/PipelineRole",
-    "family": "<ECS-FAMILY>"
+    "executionRoleArn": "arn:aws:iam::473837935280:role/PipelineRole",
+    "family": "employee-microservice"
 }

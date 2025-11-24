@@ -19,7 +19,7 @@ fi
 
 
 echo "copying task definition template and replacing placeholders..."
-cp /home/ec2-user/environment/deployment/taskdef-customer.json /tmp/taskdef-customer-temp.json
+cp /home/ec2-user/environment/deployment/taskdef-customer-ecs.json /tmp/taskdef-customer-temp.json
 
 # placeholder
 sed -i "s|<IMAGE1_NAME>|${IMAGE_NAME}|g" /tmp/taskdef-customer-temp.json
