@@ -212,6 +212,108 @@ Add this to create service .json file
     },
 ```
 
+### Applications
+- Use the same Load Balancer and listener ports
+- Use all-at-once traffic shifting
+- Terminate the old revision after 5 minutes
+
+1️⃣Create CodeDeploy Application (ECS)
+
+Use the **CodeDeploy console** to create an application with the following settings:
+
+- **Application name:** `microservices`
+- **Compute platform:** `Amazon ECS`
+
+> ⚠️ **Important:** Do NOT create a deployment group yet in this step.
+---
+
+2️⃣ Create Deployment Groups
+- `CodeDeploy > Applications > microservices > Create deployment group`
+
+#### Common Configuration
+
+**Deployment group name**: REFERENCE TABLE
+
+**Service role**: `DeployRole`
+
+**Environment configuration**: 
+- cluster name: `microservices-serverlesscluster`
+- ECS servuce name: REFERENCE TABLE
+
+**Load balancers**
+- **Load balancer:** `microservicesLB`
+- **Production listener port:** `HTTP:80`
+- **Test listener port:** `HTTP:8080`
+- **Target Group Name 1:** REFERENCE TABLE
+- **Target Group Name 1:** REFERENCE TABLE
+
+**Deployment settings**
+- **Traffic rerouting:** `Reroute traffic immediately`
+- **Deployment configuration:** `CodeDeployDefault.ECSAllAtOnce`
+- **Original revision termination:**
+  - Days: `0`
+  - Hours: `0`
+  - Minutes: `5`
+
+---
+
+#### Differences between the two Deployment Groups
+
+| Field                    | Customer Microservice         | Employee Microservice         |
+|-------------------------|-------------------------------|-------------------------------|
+| **Deployment group name** | `microservices-customer`      | `microservices-employee`      |
+| **ECS service name**       | `customer-microservice`        | `employee-microservice`        |
+| **Target group 1 name**     | `customer-tg-two`               | `employee-tg-two`               |
+| **Target group 2 name**     | `customer-tg-one`               | `employee-tg-one`               |
+
+Click **Create deployment group** after completing the configuration for each.
+
+---
+
+### CodePipline
+TODO:
+
+### Examine Deploy
+Test the CI/CD pipeline for the employee microservice
+- `Developer Tools > CodePipeline > Pipelines` -> click release change feature 
+
+TODO:
+```
+Launch a deployment of the customer microservice on Amazon ECS on Fargate.
+
+Navigate to the CodePipeline console.
+
+On the Pipelines page, choose the link for the pipeline that is named update-customer-microservice.
+
+To force a test of the current pipeline settings, choose Release change, and then choose Release.
+
+ Note: By invoking the pipeline, you created a new revision of the task definition.
+
+Wait for the two Source tasks to show a status of Succeeded - just now.
+
+In the Deploy section, wait for a Details link to appear, and then click the link.
+
+A CodeDeploy page opens in a new browser tab.
+```
+
+`Amazon Elastic Container Service > Clusters > microservices-serverlesscluster > Tasks > 01d44e6024894a33b0f86d20ca6ce22a > Configuration`
+
+Others
+```
+Observe the load balancer and target group settings.
+
+In the Amazon EC2 console, choose Target Groups.
+
+You might notice that the customer-tg-two target group is no longer associated with the load balancer. This is because CodeDeploy is managing the load balancer listener rules and might have determined that some of the target groups are no longer needed.
+
+Observe the HTTP:80 listener rules.
+
+The default rule has changed here. The default "if no other rule applies" rule previously pointed to customer-tg-two, but now it points to customer-tg-one. This is because CodeDeploy actively managed your Application Load Balancer.
+
+Observe the HTTP:8080 listener rules.
+
+The two rules still forward to the "one" target groups.
+```
 
 ## Code Pipline
 
